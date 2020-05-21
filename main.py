@@ -49,8 +49,22 @@ def check(r, g, b, switch):
     if switch == 1:
         return max(mse)
     elif switch == 0:
-        snr = [sum_b / (x * y) / (quadra_b / (x * y)), sum_g / (x * y) / (quadra_g / (x * y)),
-               sum_r / (x * y) / (quadra_r / (x * y))]
+        snr = []
+        try:
+            snr.append(sum_b / (x * y) / (quadra_b / (x * y)))
+        except ZeroDivisionError:
+            snr.append(float("inf"))
+
+        try:
+            snr.append(sum_g / (x * y) / (quadra_g / (x * y)))
+        except ZeroDivisionError:
+            snr.append(float("inf"))
+
+        try:
+            snr.append(sum_r / (x * y) / (quadra_r / (x * y)))
+        except ZeroDivisionError:
+            snr.append(float("inf"))
+
         return min(snr)
 
 
@@ -183,8 +197,12 @@ def main():
     if switch == 0:
         best = possibilities[results.index(max(results))]
     elif switch == 1:
-        best = possibilities[results.index(min(results))]
+        try:
+            best = possibilities[results.index(min(results))]
+        except ValueError:
+            best = [0, 0, 0]
 
+    print("Best case (rbg): ", best)
     read_tga(best[0], best[1], best[2])
 
 
